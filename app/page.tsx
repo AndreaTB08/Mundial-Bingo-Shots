@@ -1,65 +1,130 @@
-import Image from "next/image";
+'use client'; 
+import { useState, useEffect } from 'react';
+
+interface CasillaBingo {
+  id: number;
+  text: string;
+  marcado?: boolean;
+}
 
 export default function Home() {
+  const [board, setBoard] = useState<CasillaBingo[]>([]);
+
+  useEffect(() => {
+    // Banco total de opciones disponibles para dar variedad
+    const todasLasOpciones: CasillaBingo[] = [
+      { id: 1, text: "🟨 Tarjeta amarilla" },
+      { id: 2, text: "📋 Cambio táctico" },
+      { id: 3, text: "🟥 Tarjeta roja" },
+      { id: 4, text: "👥 Rodean al árbitro" },
+      { id: 5, text: "😢 Sale alguien llorando" },
+      { id: 6, text: "📣 Mencionan a Messi" },
+      { id: 7, text: "⏰ Gol en tiempo agregado" },
+      { id: 8, text: "🧤 Atajada espectacular" },
+      { id: 9, text: "🎶 Aficionados cantando" },
+      { id: 10, text: "🛑 Partido detenido" },
+      { id: 11, text: "🗣️ 'Increíble'" },
+      { id: 12, text: "⚽ Gol antes del minuto 15" },
+      { id: 13, text: "⭐ GOL" }, 
+      { id: 14, text: "🙅‍♂️ Gol anulado" },
+      { id: 15, text: "👏 Ovación del público" },
+      { id: 16, text: "📣 Mencionan a Cristiano" },
+      { id: 17, text: "🎯 Gol de tiro libre" },
+      { id: 18, text: "🏴 Banner gigante" },
+      { id: 19, text: "🏟️ Ocasión fallada" },
+      { id: 20, text: "🚑 Entran asistencias" },
+      { id: 21, text: "⚠️ Tarjeta por protestar" },
+      { id: 22, text: "🤕 Lesión de un jugador" },
+      { id: 23, text: "🥅 Penal señalado" },
+      { id: 24, text: "🤦‍♂️ Reclamo al árbitro" },
+      { id: 25, text: "❤️ Enfocan una pareja" }
+    ];
+
+    // Mezclamos aleatoriamente todo el banco
+    const mezcladas = [...todasLasOpciones].sort(() => Math.random() - 0.5); 
+    
+    // 🛠️ FIX CLAVE: Tomamos ESTRICTAMENTE las primeras 9 casillas para un tablero de 3x3
+    const seleccionadas9 = mezcladas.slice(0, 9);
+    
+    setBoard(seleccionadas9);
+  }, []); 
+
+  const toggleCell = (id: number) => {
+    setBoard((prevBoard) =>
+      prevBoard.map((cell) =>
+        cell.id === id ? { ...cell, marcado: !cell.marcado } : cell
+      )
+    );
+  };
+
+  if (board.length === 0) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#0f172a', color: 'white' }}>
+        <h2>Generando cartón ultra rápido (3x3)...</h2>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <main style={{ minHeight: '100vh', backgroundColor: '#0f172a', color: 'white', padding: '20px', fontFamily: 'sans-serif' }}>
+      
+      {/* Encabezado */}
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 'bold' }}>⚽ Mundial Bingo & Shots</h1>
+        <p style={{ color: '#38bdf8', fontSize: '0.9rem', marginTop: '5px' }}>¡Edición Express: Tablero de 3x3!</p>
+      </div>
+
+      {/* Botón de Generar nuevo cartón */}
+      <div style={{ maxWidth: '700px', margin: '0 auto 20px auto' }}>
+        <button 
+          onClick={() => window.location.reload()} 
+          style={{ width: '100%', padding: '12px', backgroundColor: '#0ea5e9', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+        >
+          🔄 Cambiar Cartón Aleatoriamente
+        </button>
+      </div>
+      
+      {/* 🛠️ GRID AJUSTADO A 3 COLUMNAS */}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', // Ajuste a 3 columnas simétricas
+        gap: '15px', 
+        maxWidth: '700px', // Reducido el ancho máximo para que quede compacto y centrado
+        margin: '0 auto' 
+      }}>
+        {board.map((cell) => {
+          const esGol = cell.text.includes("GOL");
+          const debeSerVerde = cell.marcado || esGol;
+          
+          return (
+            <button 
+              key={cell.id} 
+              onClick={() => toggleCell(cell.id)}
+              style={{ 
+                minHeight: "120px", // Un poco más altas para dar un aspecto cuadrado elegante
+                borderRadius: "14px", 
+                border: "none", 
+                padding: "15px", 
+                fontSize: "0.95rem", 
+                cursor: "pointer",
+                backgroundColor: debeSerVerde ? '#22c55e' : '#1e293b', 
+                color: 'white',
+                fontWeight: debeSerVerde ? 'bold' : 'normal',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2)',
+                transition: 'all 0.15s ease'
+              }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+              {cell.text}
+            </button>
+          );
+        })}
+      </div>
+
+    </main>
   );
 }
