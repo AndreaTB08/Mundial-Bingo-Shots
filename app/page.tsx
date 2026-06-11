@@ -155,7 +155,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Cuadrícula del Bingo (3x3) */}
+{/* Cuadrícula del Bingo (3x3) */}
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', 
@@ -196,17 +196,7 @@ export default function Home() {
         })}
       </div>
 
-      {/* Botón de reinicio manual abajo por si quieren cancelar a mitad del partido */}
-      {isGameStarted && !esCartonLleno && (
-        <div style={{ textAlign: 'center', marginTop: '25px' }}>
-          <button 
-            onClick={reiniciarJuegoCompleto}
-            style={{ backgroundColor: 'transparent', color: '#f43f5e', border: '1px solid #f43f5e', padding: '6px 12px', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer' }}
-          >
-            ⚠️ Reiniciar Cartón Manualmente
-          </button>
-        </div>
-      )}
+      {/* 🔒 BOTÓN DE REINICIO ELIMINADO COMPLETAMENTE DE AQUÍ */}
 
     </main>
   );
